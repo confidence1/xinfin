@@ -1,0 +1,57 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2512
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 pragma solidity >=0.4.25 <0.6.0;\
+\
+contract Election \{\
+    // Model a Candidate\
+    struct Candidate \{\
+        uint id;\
+        string name;\
+        uint voteCount;\
+    \}\
+\
+    // Store accounts that have voted\
+    mapping(address => bool) public voters;\
+    // Store Candidates\
+    // Fetch Candidate\
+    mapping(uint => Candidate) public candidates;\
+    // Store Candidates Count\
+    uint public candidatesCount;\
+\
+    // voted event\
+    event votedEvent (\
+        uint indexed _candidateId\
+    );\
+\
+    constructor () public \{\
+        addCandidate("Candidate 1");\
+        addCandidate("Candidate 2");\
+    \}\
+\
+    function addCandidate (string memory _name) private \{\
+        candidatesCount ++;\
+        candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);\
+    \}\
+\
+    function vote (uint _candidateId) public \{\
+        // require that they haven't voted before\
+        require(!voters[msg.sender]);\
+\
+        // require a valid candidate\
+        require(_candidateId > 0 && _candidateId <= candidatesCount);\
+\
+        // record that voter has voted\
+        voters[msg.sender] = true;\
+\
+        // update candidate vote Count\
+        candidates[_candidateId].voteCount ++;\
+\
+        // trigger voted event\
+        emit votedEvent(_candidateId);\
+    \}\
+\}}
